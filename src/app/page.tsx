@@ -1,95 +1,87 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client"
+
+import React, { useState } from 'react';
+import Image from 'next/image';
+import styles from './page.module.css';
+
+type CardRank = 'A' | 'K' | 'Q' | 'J' | '10' | '9' | '8' | '7' | '6' | '5' | '4' | '3' | '2';
 
 export default function Home() {
+  // Define ranks for poker cards
+  const ranks: CardRank[] = ['A', 'K', 'Q', 'J', '9', '8', '7', '6', '5', '4', '3', '2'];
+
+  // State to track the toggled items
+  const [toggledItems, setToggledItems] = useState<Set<String>>(new Set());
+
+  // Function to generate grid items
+  const generateGridItems = () => {
+    let gridItems = [];
+    for (let i = 0; i < ranks.length; i++) {
+      for (let j = 0; j < ranks.length; j++) {
+        // Generate a unique key for each item
+        // but always put ace between king and queen, and king between queen and jack, etc.
+        const itemKey = `${ranks[j]}${ranks[i]}`;
+        const itemDisplay = (ranks[j] === "A" || (ranks[j] === "K" && ranks[i] !== "A") || (ranks[j] === "Q" && ranks[i] !== "A" && ranks[i] !== "K")) ? `${ranks[j]}${ranks[i]}` : `${ranks[i]}${ranks[j]}`;
+        gridItems.push(
+          <div
+            key={itemKey}
+            className={`${styles.gridItem} ${toggledItems.has(itemKey) ? styles.toggled : ''}`}
+            onClick={() => toggleItem(itemKey)}
+          >
+            {itemDisplay}
+          </div>
+        );
+      }
+    }
+    return gridItems;
+  };
+
+  // Function to handle item toggle
+  const toggleItem = (itemKey: string) => {
+    const newToggledItems = new Set(toggledItems);
+    if (toggledItems.has(itemKey)) {
+      // make a new set identical to toggledItems but without the item
+      newToggledItems.delete(itemKey);
+    }
+    else {
+      newToggledItems.add(itemKey);
+    }
+    setToggledItems(newToggledItems);
+  };
+
+  const calculateCombinations = () => {
+    let belowDiagonal = 0;
+    let onDiagonal = 0;
+    let aboveDiagonal = 0;
+
+    for (let i = 0; i < ranks.length; i++) {
+      for (let j = 0; j < ranks.length; j++) {
+        const itemKey = `${ranks[j]}${ranks[i]}`;
+        if (toggledItems.has(itemKey)) {
+          if (i > j) {
+            belowDiagonal++;
+          } else if (i === j) {
+            onDiagonal++;
+          } else {
+            aboveDiagonal++;
+          }
+        }
+      }
+    }
+
+    return (12 * belowDiagonal) + (6 * onDiagonal) + (4 * aboveDiagonal);
+  };
+
+
   return (
     <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
       <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+        {generateGridItems()}
       </div>
+      <div>
+        Number of Combinations: {calculateCombinations()}
+      </div>
+
     </main>
-  )
+  );
 }
