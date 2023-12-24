@@ -87,11 +87,24 @@ export default function Home() {
       <div className={styles.grid}>
         {generateGridItems()}
       </div>
-      <div>
-        Number of Combinations: {combinations}
-      </div>
-      <div>
-        Combos with one ace: {combinationsOneAce} ({combinationsOneAcePercentage}%)
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gridGap: "10px",
+        marginTop: "10px",
+      }}>
+        <div>
+          Combos:
+        </div>
+        <div>
+          {combinations}
+        </div>
+        <div>
+          W/ 1 ace:
+        </div>
+        <div>
+          {combinationsOneAce} ({combinationsOneAcePercentage}%)
+        </div>
       </div>
 
     </main>
