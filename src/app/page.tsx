@@ -90,7 +90,7 @@ export default function Home() {
       <div style={{
         display: "grid",
         gridTemplateColumns: "1fr 1fr",
-        gridGap: "10px",
+        gridGap: "6px",
         marginTop: "10px",
       }}>
         <div>
