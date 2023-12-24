@@ -49,29 +49,38 @@ export default function Home() {
     setToggledItems(newToggledItems);
   };
 
-  const calculateCombinations = () => {
+  const calculateCombinations: () => { combinations: number, combinationsOneAce: number } = () => {
     let belowDiagonal = 0;
+    let belowDiagonalOneAce = 0;
     let onDiagonal = 0;
+    let onDiagonalOneAce = 0;
     let aboveDiagonal = 0;
+    let aboveDiagonalOneAce = 0;
 
     for (let i = 0; i < ranks.length; i++) {
       for (let j = 0; j < ranks.length; j++) {
         const itemKey = `${ranks[j]}${ranks[i]}`;
+        const exactlyOneAce = (ranks[j] === "A" && ranks[i] !== "A") || (ranks[j] !== "A" && ranks[i] === "A");
         if (toggledItems.has(itemKey)) {
           if (i > j) {
             belowDiagonal++;
+            if (exactlyOneAce) { belowDiagonalOneAce++; }
           } else if (i === j) {
             onDiagonal++;
+            if (exactlyOneAce) { onDiagonalOneAce++; }
           } else {
             aboveDiagonal++;
+            if (exactlyOneAce) { aboveDiagonalOneAce++; }
           }
         }
       }
     }
 
-    return (12 * belowDiagonal) + (6 * onDiagonal) + (4 * aboveDiagonal);
+    return { combinations: (12 * belowDiagonal) + (6 * onDiagonal) + (4 * aboveDiagonal), combinationsOneAce: (12 * belowDiagonalOneAce) + (6 * onDiagonalOneAce) + (4 * aboveDiagonalOneAce) };
   };
 
+  const { combinations, combinationsOneAce } = calculateCombinations();
+  const combinationsOneAcePercentage = combinations !== 0 ? Math.round((combinationsOneAce / combinations) * 10000) / 100 : 0;
 
   return (
     <main className={styles.main}>
@@ -79,7 +88,10 @@ export default function Home() {
         {generateGridItems()}
       </div>
       <div>
-        Number of Combinations: {calculateCombinations()}
+        Number of Combinations: {combinations}
+      </div>
+      <div>
+        Combos with one ace: {combinationsOneAce} ({combinationsOneAcePercentage}%)
       </div>
 
     </main>
