@@ -49,64 +49,63 @@ export default function Home() {
     setToggledItems(newToggledItems);
   };
 
-  const calculateCombinations: () => { combinations: number, combinationsOneAce: number } = () => {
-    let belowDiagonal = 0;
-    let belowDiagonalOneAce = 0;
-    let onDiagonal = 0;
-    let onDiagonalOneAce = 0;
-    let aboveDiagonal = 0;
-    let aboveDiagonalOneAce = 0;
+  const calculateCombinations: () => {
+    combinations: number;
+    combinationsByRank: Record<CardRank, number>;
+  } = () => {
+    let totals = {
+      combinations: 0,
+      combinationsByRank: {} as Record<CardRank, number>
+    };
+    for (let rank of ranks) {
+      totals.combinationsByRank[rank] = 0;
+    }
+
 
     for (let i = 0; i < ranks.length; i++) {
       for (let j = 0; j < ranks.length; j++) {
         const itemKey = `${ranks[j]}${ranks[i]}`;
-        const exactlyOneAce = (ranks[j] === "A" && ranks[i] !== "A") || (ranks[j] !== "A" && ranks[i] === "A");
         if (toggledItems.has(itemKey)) {
-          if (i > j) {
-            belowDiagonal++;
-            if (exactlyOneAce) { belowDiagonalOneAce++; }
-          } else if (i === j) {
-            onDiagonal++;
-            if (exactlyOneAce) { onDiagonalOneAce++; }
-          } else {
-            aboveDiagonal++;
-            if (exactlyOneAce) { aboveDiagonalOneAce++; }
+          const multiplier = i > j ? 12 : i === j ? 6 : 4;
+          totals.combinations += multiplier;
+
+          // Check for each rank
+          for (let rank of ranks) {
+            const exactlyOneRank = (ranks[j] === rank && ranks[i] !== rank) || (ranks[j] !== rank && ranks[i] === rank);
+            if (exactlyOneRank) {
+              totals.combinationsByRank[rank] += multiplier;
+            }
           }
         }
       }
     }
 
-    return { combinations: (12 * belowDiagonal) + (6 * onDiagonal) + (4 * aboveDiagonal), combinationsOneAce: (12 * belowDiagonalOneAce) + (6 * onDiagonalOneAce) + (4 * aboveDiagonalOneAce) };
+    return totals;
   };
 
-  const { combinations, combinationsOneAce } = calculateCombinations();
-  const combinationsOneAcePercentage = combinations !== 0 ? Math.round((combinationsOneAce / combinations) * 10000) / 100 : 0;
+  const { combinations, combinationsByRank } = calculateCombinations();
 
   return (
     <main className={styles.main}>
       <div className={styles.grid}>
         {generateGridItems()}
       </div>
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        gridGap: "6px",
-        marginTop: "10px",
-      }}>
-        <div>
-          Combos:
-        </div>
-        <div>
-          {combinations}
-        </div>
-        <div>
-          W/ 1 ace:
-        </div>
-        <div>
-          {combinationsOneAce} ({combinationsOneAcePercentage}%)
-        </div>
+      <div>
+        <div>Combos: {combinations}</div>
       </div>
-
+      <div style={{ display: "grid", gridTemplateColumns: "4rem 2rem 3rem", gridGap: "6px", marginTop: "10px" }}>
+        {ranks.map(rank => (
+          <React.Fragment key={rank}>
+            <div><span style={{ opacity: 0.5 }}>W/ 1</span> {rank}:</div>
+            <div>
+              {combinationsByRank[rank]}
+            </div>
+            <div>
+              ({combinations !== 0 ? Math.round((combinationsByRank[rank] / combinations) * 1000) / 10 : 0}%)
+            </div>
+          </React.Fragment>
+        ))}
+      </div>
     </main>
   );
 }
