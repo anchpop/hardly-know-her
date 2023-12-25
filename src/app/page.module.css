@@ -71,8 +71,9 @@
   .gridContainer {
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: space-between;
     width: 1200px;
+    gap: 1rem;
   }
 }
 
