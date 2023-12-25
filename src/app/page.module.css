@@ -7,9 +7,17 @@
   min-height: 100vh;
 }
 
-.grid {
+.cardGrid {
   display: grid;
   grid-template-columns: repeat(13, 1fr);
+}
+
+.comboGrid {
+  display: grid;
+  grid-template-columns: 4rem 2rem 2rem 3rem 2rem 2rem 4rem;
+  grid-gap: 6px;
+  margin-top: 10px;
+  font-size: 14px;
 }
 
 .gridItem {
@@ -71,6 +79,14 @@
   .gridItem {
     min-height: 1.8rem;
     min-width: 1.8rem;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 780px) {
+  .gridItem {
+    min-height: 1.7rem;
+    min-width: 1.7rem;
     font-size: 13px;
   }
 }

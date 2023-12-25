@@ -91,13 +91,13 @@ export default function Home() {
     <main className={styles.main}>
       <div className={styles.gridContainer}>
         <div>
-          <div className={`${styles.grid} ${styles.g1}`}>
+          <div className={`${styles.cardGrid} ${styles.g1}`}>
             {generateGridItems(toggledItems1, setToggledItems1)}
           </div>
           <div className={styles.combos}>Combos: {comboInfo1.combinations}</div>
         </div>
         <div>
-          <div className={`${styles.grid} ${styles.g2}`}>
+          <div className={`${styles.cardGrid} ${styles.g2}`}>
             {generateGridItems(toggledItems2, setToggledItems2)}
           </div>
           <div>
@@ -105,9 +105,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div style={{
-        display: "grid", gridTemplateColumns: "4rem 2rem 2rem 3rem 2rem 2rem 4rem", gridGap: "6px", marginTop: "10px",
-      }}>
+      <div className={styles.comboGrid}>
         {ranks.map(rank => (
           <React.Fragment key={rank}>
             <div>
