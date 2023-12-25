@@ -6,6 +6,26 @@ import styles from './page.module.css';
 
 type CardRank = 'A' | 'K' | 'Q' | 'J' | 'T' | '9' | '8' | '7' | '6' | '5' | '4' | '3' | '2';
 
+function formatNumber(num: number) {
+  // Split the number on the decimal point
+  let parts = num.toString().split('.');
+
+  // Pad the integer part to ensure it has at least two digits
+  parts[0] = parts[0].padStart(2, '0');
+
+  // If there is a decimal part, format it to have exactly one digit
+  if (parts[1]) {
+    parts[1] = parts[1].length > 1 ? parts[1].substring(0, 1) : parts[1].padEnd(1, '0');
+  } else {
+    // If there wasn't a decimal part, add ".0"
+    parts.push('0');
+  }
+
+  // Join the parts back together
+  return parts.join('.');
+}
+
+
 export default function Home() {
   // Define ranks for poker cards
   const ranks: CardRank[] = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
@@ -108,8 +128,8 @@ export default function Home() {
       <div className={styles.comboGrid}>
         {ranks.map(rank => (
           <React.Fragment key={rank}>
-            <div style={{ textAlign: "right" }}>
-              ({comboInfo1.combinations !== 0 ? Math.round((comboInfo1.combinationsByRank[rank] / comboInfo1.combinations) * 1000) / 10 : 0}%)
+            <div style={{ textAlign: "right", fontFamily: "monospace" }}>
+              ({formatNumber(comboInfo1.combinations !== 0 ? Math.round((comboInfo1.combinationsByRank[rank] / comboInfo1.combinations) * 1000) / 10 : 0)}%)
             </div>
             <div style={{ textAlign: "center" }}>
               {comboInfo1.combinationsByRank[rank]}
@@ -122,8 +142,8 @@ export default function Home() {
             <div style={{ textAlign: "center" }}>
               {comboInfo2.combinationsByRank[rank]}
             </div>
-            <div>
-              ({comboInfo2.combinations !== 0 ? Math.round((comboInfo2.combinationsByRank[rank] / comboInfo2.combinations) * 1000) / 10 : 0}%)
+            <div style={{ fontFamily: "monospace" }}>
+              ({formatNumber(comboInfo2.combinations !== 0 ? Math.round((comboInfo2.combinationsByRank[rank] / comboInfo2.combinations) * 1000) / 10 : 0)}%)
             </div>
           </React.Fragment>
         ))}
