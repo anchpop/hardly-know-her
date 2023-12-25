@@ -90,13 +90,13 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <div className={styles.gridContainer}>
-        <div>
+        <div style={{ width: "100%" }}>
           <div className={`${styles.cardGrid} ${styles.g1}`}>
             {generateGridItems(toggledItems1, setToggledItems1)}
           </div>
           <div className={styles.combos}>Combos: {comboInfo1.combinations}</div>
         </div>
-        <div>
+        <div style={{ width: "100%" }}>
           <div className={`${styles.cardGrid} ${styles.g2}`}>
             {generateGridItems(toggledItems2, setToggledItems2)}
           </div>
