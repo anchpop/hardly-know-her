@@ -16,7 +16,7 @@
 
 .comboGrid {
   display: grid;
-  grid-template-columns: 6rem 2rem 1.5rem 3rem 1.5rem 2rem 6rem;
+  grid-template-columns: 11rem 2rem 1.5rem 3rem 1.5rem 2rem 11rem;
   grid-gap: 6px;
   margin-top: 10px;
   font-size: 14px;
@@ -97,7 +97,6 @@
 }
 
 @media (max-width: 500px) {
-
   .gridItem {
     font-size: 13px;
   }
