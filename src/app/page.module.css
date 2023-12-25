@@ -54,3 +54,11 @@
     width: 1200px;
   }
 }
+
+@media (max-width: 1200px) {
+  .gridItem {
+    min-height: 2rem;
+    min-width: 2rem;
+    font-size: 13px;
+  }
+}
