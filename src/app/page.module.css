@@ -31,3 +31,26 @@
 .gridItem {
   background-color: #202020;
 }
+
+.combos {
+  text-align: center;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.rank {
+  width: 1rem;
+  text-align: center;
+  border: #FFFFFF99;
+  border-style: solid;
+  border-width: 1px;
+}
+
+@media (min-width: 1200px) {
+  .gridContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 1200px;
+  }
+}

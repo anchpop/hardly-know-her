@@ -89,16 +89,21 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
-      <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly", width: "100%" }}>
-        <div className={styles.grid}>
-          {generateGridItems(toggledItems1, setToggledItems1)}
+      <div className={styles.gridContainer}>
+        <div>
+          <div className={styles.grid}>
+            {generateGridItems(toggledItems1, setToggledItems1)}
+          </div>
+          <div className={styles.combos}>Combos: {comboInfo1.combinations}</div>
         </div>
-        <div className={styles.grid}>
-          {generateGridItems(toggledItems2, setToggledItems2)}
+        <div>
+          <div className={styles.grid}>
+            {generateGridItems(toggledItems2, setToggledItems2)}
+          </div>
+          <div>
+            <div className={styles.combos}>Combos: {comboInfo2.combinations}</div>
+          </div>
         </div>
-      </div>
-      <div>
-        <div>Combos: {comboInfo1.combinations}</div>
       </div>
       <div style={{
         display: "grid", gridTemplateColumns: "4rem 2rem 2rem 3rem 2rem 2rem 4rem", gridGap: "6px", marginTop: "10px",
@@ -111,11 +116,11 @@ export default function Home() {
             <div>
               {comboInfo1.combinationsByRank[rank]}
             </div>
-            <div> {rank} </div>
+            <div><div className={styles.rank}> {rank} </div></div>
             <div>
-              <span style={{ opacity: 0.5 }}>W/ 1</span>
+              <div style={{ opacity: 0.5 }}>W/ 1</div>
             </div>
-            <div> {rank} </div>
+            <div><div className={styles.rank}> {rank} </div></div>
             <div>
               {comboInfo2.combinationsByRank[rank]}
             </div>
