@@ -4,11 +4,11 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import styles from './page.module.css';
 
-type CardRank = 'A' | 'K' | 'Q' | 'J' | '10' | '9' | '8' | '7' | '6' | '5' | '4' | '3' | '2';
+type CardRank = 'A' | 'K' | 'Q' | 'J' | 'T' | '9' | '8' | '7' | '6' | '5' | '4' | '3' | '2';
 
 export default function Home() {
   // Define ranks for poker cards
-  const ranks: CardRank[] = ['A', 'K', 'Q', 'J', '9', '8', '7', '6', '5', '4', '3', '2'];
+  const ranks: CardRank[] = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
 
   // State to track the toggled items
   const [toggledItems, setToggledItems] = useState<Set<String>>(new Set());
@@ -21,7 +21,7 @@ export default function Home() {
         // Generate a unique key for each item
         // but always put ace between king and queen, and king between queen and jack, etc.
         const itemKey = `${ranks[j]}${ranks[i]}`;
-        const itemDisplay = (ranks[j] === "A" || (ranks[j] === "K" && ranks[i] !== "A") || (ranks[j] === "Q" && ranks[i] !== "A" && ranks[i] !== "K")) ? `${ranks[j]}${ranks[i]}` : `${ranks[i]}${ranks[j]}`;
+        const itemDisplay = (ranks[j] === "A" || (ranks[j] === "K" && ranks[i] !== "A") || (ranks[j] === "Q" && ranks[i] !== "A" && ranks[i] !== "K") || (ranks[j] === "T" && ranks[i] !== "A" && ranks[i] !== "K" && ranks[i] !== "Q")) ? `${ranks[j]} ${ranks[i]}` : `${ranks[i]} ${ranks[j]}`;
         gridItems.push(
           <div
             key={itemKey}
@@ -93,10 +93,14 @@ export default function Home() {
       <div>
         <div>Combos: {combinations}</div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "4rem 2rem 3rem", gridGap: "6px", marginTop: "10px" }}>
+      <div style={{
+        display: "grid", gridTemplateColumns: "4rem 2rem 3rem", gridGap: "6px", marginTop: "10px",
+      }}>
         {ranks.map(rank => (
           <React.Fragment key={rank}>
-            <div><span style={{ opacity: 0.5 }}>W/ 1</span> {rank}:</div>
+            <div style={{
+              borderRight: "1px solid #DEDEDE",
+            }}><span style={{ opacity: 0.5 }}>W/ 1</span> {rank} </div>
             <div>
               {combinationsByRank[rank]}
             </div>
@@ -106,6 +110,6 @@ export default function Home() {
           </React.Fragment>
         ))}
       </div>
-    </main>
+    </main >
   );
 }

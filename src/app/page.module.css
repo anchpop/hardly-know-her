@@ -9,7 +9,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(13, 1fr);
 }
 
 .gridItem {
@@ -17,11 +17,16 @@
   justify-content: center;
   align-items: center;
   border: 1px solid black;
-  padding: 1rem;
+  min-height: 3rem;
+  min-width: 3rem;
   cursor: pointer;
   transition: background-color 0.1s;
 }
 
-.toggled {
+.gridItem.toggled {
   background-color: red;
+}
+
+.gridItem {
+  background-color: #202020;
 }
