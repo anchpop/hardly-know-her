@@ -22,7 +22,7 @@ export default function Home() {
         // Generate a unique key for each item
         // but always put ace between king and queen, and king between queen and jack, etc.
         const itemKey = `${ranks[j]}${ranks[i]}`;
-        const itemDisplay = (ranks[j] === "A" || (ranks[j] === "K" && ranks[i] !== "A") || (ranks[j] === "Q" && ranks[i] !== "A" && ranks[i] !== "K") || (ranks[j] === "T" && ranks[i] !== "A" && ranks[i] !== "K" && ranks[i] !== "Q")) ? `${ranks[j]} ${ranks[i]}` : `${ranks[i]} ${ranks[j]}`;
+        const itemDisplay = (ranks[j] === "A" || (ranks[j] === "K" && ranks[i] !== "A") || (ranks[j] === "Q" && ranks[i] !== "A" && ranks[i] !== "K") || (ranks[j] === "T" && ranks[i] !== "A" && ranks[i] !== "K" && ranks[i] !== "Q")) ? `${ranks[j]}${ranks[i]}` : `${ranks[i]}${ranks[j]}`;
         gridItems.push(
           <div
             key={itemKey}
