@@ -128,7 +128,7 @@ export default function Home() {
       <div className={styles.comboGrid}>
         {ranks.map(rank => (
           <React.Fragment key={rank}>
-            <div style={{ textAlign: "right", fontFamily: "monospace", fontSize: "16px" }}>
+            <div className={styles.percentageCombo} style={{ textAlign: "right", }}>
               ({formatNumber(comboInfo1.combinations !== 0 ? Math.round((comboInfo1.combinationsByRank[rank] / comboInfo1.combinations) * 1000) / 10 : 0)}%)
             </div>
             <div style={{ textAlign: "center" }}>
@@ -142,7 +142,7 @@ export default function Home() {
             <div style={{ textAlign: "center" }}>
               {comboInfo2.combinationsByRank[rank]}
             </div>
-            <div style={{ fontFamily: "monospace", fontSize: "16px" }}>
+            <div className={styles.percentageCombo}>
               ({formatNumber(comboInfo2.combinations !== 0 ? Math.round((comboInfo2.combinationsByRank[rank] / comboInfo2.combinations) * 1000) / 10 : 0)}%)
             </div>
           </React.Fragment>
