@@ -91,13 +91,13 @@ export default function Home() {
     <main className={styles.main}>
       <div className={styles.gridContainer}>
         <div>
-          <div className={styles.grid}>
+          <div className={`${styles.grid} ${styles.g1}`}>
             {generateGridItems(toggledItems1, setToggledItems1)}
           </div>
           <div className={styles.combos}>Combos: {comboInfo1.combinations}</div>
         </div>
         <div>
-          <div className={styles.grid}>
+          <div className={`${styles.grid} ${styles.g2}`}>
             {generateGridItems(toggledItems2, setToggledItems2)}
           </div>
           <div>
@@ -116,11 +116,11 @@ export default function Home() {
             <div>
               {comboInfo1.combinationsByRank[rank]}
             </div>
-            <div><div className={styles.rank}> {rank} </div></div>
+            <div><div className={`${styles.g1} ${styles.rank}`}> {rank} </div></div>
             <div>
               <div style={{ opacity: 0.5 }}>W/ 1</div>
             </div>
-            <div><div className={styles.rank}> {rank} </div></div>
+            <div><div className={`${styles.g2} ${styles.rank}`}> {rank} </div></div>
             <div>
               {comboInfo2.combinationsByRank[rank]}
             </div>

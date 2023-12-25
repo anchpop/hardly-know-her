@@ -24,8 +24,13 @@
   transition: background-color 0.1s;
 }
 
-.gridItem.toggled {
-  background-color: red;
+
+.g1 .gridItem.toggled {
+  background-color: #ffa500;
+}
+
+.g2 .gridItem.toggled {
+  background-color: #008000;
 }
 
 .gridItem {
@@ -41,9 +46,16 @@
 .rank {
   width: 1rem;
   text-align: center;
-  border: #FFFFFF99;
   border-style: solid;
   border-width: 1px;
+}
+
+.g1.rank {
+  border-color: #ffa50099;
+}
+
+.g2.rank {
+  border-color: #00800099;
 }
 
 @media (min-width: 1200px) {
