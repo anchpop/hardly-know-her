@@ -111,15 +111,15 @@ export default function Home() {
             <div style={{ textAlign: "right" }}>
               ({comboInfo1.combinations !== 0 ? Math.round((comboInfo1.combinationsByRank[rank] / comboInfo1.combinations) * 1000) / 10 : 0}%)
             </div>
-            <div style={{ textAlign: "right" }}>
+            <div style={{ textAlign: "center" }}>
               {comboInfo1.combinationsByRank[rank]}
             </div>
-            <div style={{ textAlign: "right" }}><div className={`${styles.g1} ${styles.rank}`}>{rank}</div></div>
+            <div><div className={`${styles.g1} ${styles.rank}`}>{rank}</div></div>
             <div style={{ textAlign: "center" }}>
               <div style={{ opacity: 0.5 }}>W/ 1</div>
             </div>
             <div><div className={`${styles.g2} ${styles.rank}`}>{rank}</div></div>
-            <div>
+            <div style={{ textAlign: "center" }}>
               {comboInfo2.combinationsByRank[rank]}
             </div>
             <div>
