@@ -22,7 +22,7 @@ export default function Home() {
         // Generate a unique key for each item
         // but always put ace between king and queen, and king between queen and jack, etc.
         const itemKey = `${ranks[j]}${ranks[i]}`;
-        const itemDisplay = (ranks[j] === "A" || (ranks[j] === "K" && ranks[i] !== "A") || (ranks[j] === "Q" && ranks[i] !== "A" && ranks[i] !== "K") || (ranks[j] === "T" && ranks[i] !== "A" && ranks[i] !== "K" && ranks[i] !== "Q")) ? `${ranks[j]}${ranks[i]}` : `${ranks[i]}${ranks[j]}`;
+        const itemDisplay = (ranks[j] === "A" || (ranks[j] === "K" && ranks[i] !== "A") || (ranks[j] === "Q" && ranks[i] !== "A" && ranks[i] !== "K") || (ranks[j] === "J" && ranks[i] !== "A" && ranks[i] !== "K" && ranks[i] !== "Q") || (ranks[j] === "T" && ranks[i] !== "A" && ranks[i] !== "K" && ranks[i] !== "Q" && ranks[i] !== "J")) ? `${ranks[j]}${ranks[i]}` : `${ranks[i]}${ranks[j]}`;
         gridItems.push(
           <div
             key={itemKey}
@@ -108,17 +108,17 @@ export default function Home() {
       <div className={styles.comboGrid}>
         {ranks.map(rank => (
           <React.Fragment key={rank}>
-            <div>
+            <div style={{ textAlign: "right" }}>
               ({comboInfo1.combinations !== 0 ? Math.round((comboInfo1.combinationsByRank[rank] / comboInfo1.combinations) * 1000) / 10 : 0}%)
             </div>
-            <div>
+            <div style={{ textAlign: "right" }}>
               {comboInfo1.combinationsByRank[rank]}
             </div>
-            <div><div className={`${styles.g1} ${styles.rank}`}> {rank} </div></div>
-            <div>
+            <div style={{ textAlign: "right" }}><div className={`${styles.g1} ${styles.rank}`}>{rank}</div></div>
+            <div style={{ textAlign: "center" }}>
               <div style={{ opacity: 0.5 }}>W/ 1</div>
             </div>
-            <div><div className={`${styles.g2} ${styles.rank}`}> {rank} </div></div>
+            <div><div className={`${styles.g2} ${styles.rank}`}>{rank}</div></div>
             <div>
               {comboInfo2.combinationsByRank[rank]}
             </div>
