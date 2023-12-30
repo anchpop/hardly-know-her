@@ -246,7 +246,7 @@ export default function Home() {
           className={styles.bigButton}
           onClick={() => setGameMode(!gameMode)}
         >
-          🎮 <b>{gameMode ? "Game Mode Activate" : "Game Mode Completed"}</b> 🃏
+          🎮 <b>{gameMode ? "Game Mode Completed" : "Game Mode Activate"}</b> 🃏
         </button>
       </div>
       <div
