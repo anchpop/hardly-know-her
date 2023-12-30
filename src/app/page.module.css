@@ -143,3 +143,14 @@
   margin-top: 1rem;
   flex-direction: row;
 }
+
+.selected.g1 {
+  box-shadow: 0 0 10px 5px #ffa500;
+}
+
+.selected.g2 {
+  box-shadow: 0 0 10px 5px #008000;
+}
+.selected {
+  box-shadow: 0 0 10px 5px #ffffff;
+}

@@ -158,9 +158,9 @@ export default function Home() {
 
   const [gameMode, setGameMode] = useState<boolean>(false);
 
-  const [guesses, setGuesses] = useState<("u1" | "u2" | "both" | undefined)[]>([
-    "u1",
-    "u2",
+  const [guesses, setGuesses] = useState<("g1" | "g2" | "both" | undefined)[]>([
+    "g1",
+    "g2",
     "both",
     undefined,
   ]);
@@ -206,7 +206,7 @@ export default function Home() {
         className={`${gameMode ? styles.gameContainer : ""} ${styles.comboGrid
           }`}
       >
-        {ranks.map((rank) => (
+        {ranks.map((rank, i) => (
           <React.Fragment key={rank}>
             {/* percentage */}
             <div
@@ -233,17 +233,17 @@ export default function Home() {
 
             {/* rank */}
             <div>
-              <div className={`${styles.g1} ${styles.rank}`}>{rank}</div>
+              <div className={`${guesses[i] === "g1" ? styles.selected : ""} ${styles.g1} ${styles.rank}`}>{rank}</div>
             </div>
 
             {/* separator */}
-            <div style={{ textAlign: "center" }}>
+            <div style={{ textAlign: "center" }} className={`${guesses[i] === "both" ? styles.selected : ""}`}>
               <div style={{ opacity: 0.5 }}>W/ 1</div>
             </div>
 
             {/* rank */}
             <div>
-              <div className={`${styles.g2} ${styles.rank}`}>{rank}</div>
+              <div className={`${guesses[i] === "g2" ? styles.selected : ""} ${styles.g2} ${styles.rank}`}>{rank}</div>
             </div>
 
             {/* absolute number */}
