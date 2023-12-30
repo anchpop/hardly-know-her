@@ -124,3 +124,23 @@
     font-size: 10px;
   }
 }
+
+.bigButton {
+  padding: 1rem;
+  font-size: 17px;
+  cursor: pointer;
+  transition: background-color 0.1s;
+  border-radius: 20rem;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.gameContainer .answer {
+  filter: blur(10px);
+}
+
+.gameButtons {
+  display: flex;
+  margin-top: 1rem;
+  flex-direction: row;
+}

@@ -107,6 +107,10 @@ export default function Home() {
   const comboInfo1 = calculateCombinations(toggledItems1);
   const comboInfo2 = calculateCombinations(toggledItems2);
 
+  const [gameMode, setGameMode] = useState<boolean>(false);
+
+  const [guesses, setGuesses] = useState<("u1" | "u2" | "both" | undefined)[]>(["u1", "u2", "both", undefined]);
+
   return (
     <main className={styles.main}>
       <div className={styles.gridContainer}>
@@ -125,13 +129,21 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className={styles.comboGrid}>
+      <div className={`${styles.gameButtons}`}>
+        <button className={styles.bigButton} onClick={() => {
+          setToggledItems1(new Set());
+          setToggledItems2(new Set());
+        }
+        }>Clear board</button>
+        <button className={styles.bigButton} onClick={() => setGameMode(!gameMode)}>🎮 <b>{gameMode ? "Show Answers" : "Hide Answers"}</b> 🃏</button>
+      </div>
+      <div className={`${gameMode ? styles.gameContainer : ""} ${styles.comboGrid}`}>
         {ranks.map(rank => (
           <React.Fragment key={rank}>
-            <div className={styles.percentageCombo} style={{ textAlign: "right", }}>
+            <div className={`${styles.answer} ${styles.percentageCombo}`} style={{ textAlign: "right", }}>
               ({formatNumber(comboInfo1.combinations !== 0 ? Math.round((comboInfo1.combinationsByRank[rank] / comboInfo1.combinations) * 1000) / 10 : 0)}%)
             </div>
-            <div style={{ textAlign: "center" }}>
+            <div style={{ textAlign: "center" }} className={`${styles.answer}`}>
               {comboInfo1.combinationsByRank[rank]}
             </div>
             <div><div className={`${styles.g1} ${styles.rank}`}>{rank}</div></div>
@@ -139,10 +151,10 @@ export default function Home() {
               <div style={{ opacity: 0.5 }}>W/ 1</div>
             </div>
             <div><div className={`${styles.g2} ${styles.rank}`}>{rank}</div></div>
-            <div style={{ textAlign: "center" }}>
+            <div style={{ textAlign: "center" }} className={`${styles.answer}`}>
               {comboInfo2.combinationsByRank[rank]}
             </div>
-            <div className={styles.percentageCombo}>
+            <div className={`${styles.answer} ${styles.percentageCombo}`}>
               ({formatNumber(comboInfo2.combinations !== 0 ? Math.round((comboInfo2.combinationsByRank[rank] / comboInfo2.combinations) * 1000) / 10 : 0)}%)
             </div>
           </React.Fragment>
