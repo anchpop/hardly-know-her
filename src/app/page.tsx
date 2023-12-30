@@ -158,12 +158,22 @@ export default function Home() {
 
   const [gameMode, setGameMode] = useState<boolean>(false);
 
-  const [guesses, setGuesses] = useState<("g1" | "g2" | "both" | undefined)[]>([
-    "g1",
-    "g2",
-    "both",
-    undefined,
-  ]);
+  const initialGuesses = {
+    "A": undefined,
+    "K": undefined,
+    "Q": undefined,
+    "J": undefined,
+    "T": undefined,
+    "9": undefined,
+    "8": undefined,
+    "7": undefined,
+    "6": undefined,
+    "5": undefined,
+    "4": undefined,
+    "3": undefined,
+    "2": undefined,
+  }
+  const [guesses, setGuesses] = useState<{ [key in CardRank]: "g1" | "g2" | "both" | undefined }>(initialGuesses);
 
   return (
     <main className={styles.main}>
@@ -191,6 +201,7 @@ export default function Home() {
           onClick={() => {
             setToggledItems1(new Set());
             setToggledItems2(new Set());
+            setGuesses(initialGuesses);
           }}
         >
           Clear board
@@ -206,7 +217,7 @@ export default function Home() {
         className={`${gameMode ? styles.gameContainer : ""} ${styles.comboGrid
           }`}
       >
-        {ranks.map((rank, i) => (
+        {ranks.map((rank) => (
           <React.Fragment key={rank}>
             {/* percentage */}
             <div
@@ -232,18 +243,18 @@ export default function Home() {
             </div>
 
             {/* rank */}
-            <div>
-              <div className={`${guesses[i] === "g1" ? styles.selected : ""} ${styles.g1} ${styles.rank}`}>{rank}</div>
+            <div onClick={() => setGuesses({ ...guesses, [rank]: guesses[rank] === "g1" ? undefined : "g1" })}>
+              <div className={`${guesses[rank] === "g1" ? styles.selected : ""} ${styles.g1} ${styles.rank}`}>{rank}</div>
             </div>
 
             {/* separator */}
-            <div style={{ textAlign: "center" }} className={`${guesses[i] === "both" ? styles.selected : ""}`}>
+            <div style={{ textAlign: "center" }} className={`${guesses[rank] === "both" ? styles.selected : ""}`} onClick={() => setGuesses({ ...guesses, [rank]: guesses[rank] === "both" ? undefined : "both" })}>
               <div style={{ opacity: 0.5 }}>W/ 1</div>
             </div>
 
             {/* rank */}
-            <div>
-              <div className={`${guesses[i] === "g2" ? styles.selected : ""} ${styles.g2} ${styles.rank}`}>{rank}</div>
+            <div onClick={() => setGuesses({ ...guesses, [rank]: guesses[rank] === "g2" ? undefined : "g2" })}>
+              <div className={`${guesses[rank] === "g2" ? styles.selected : ""} ${styles.g2} ${styles.rank}`}>{rank}</div>
             </div>
 
             {/* absolute number */}
