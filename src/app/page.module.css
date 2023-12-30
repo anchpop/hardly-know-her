@@ -145,14 +145,14 @@
 }
 
 .selected.g1 {
-  box-shadow: 0 0 10px 5px #ffa500;
+  box-shadow: 0 0 3px 5px #ffa500;
 }
 
 .selected.g2 {
-  box-shadow: 0 0 10px 5px #008000;
+  box-shadow: 0 0 3px 5px #008000;
 }
 .selected {
-  box-shadow: 0 0 10px 5px #ffffff;
+  box-shadow: 0 0 3px 5px #ffffff;
 }
 
 .comboRow {
