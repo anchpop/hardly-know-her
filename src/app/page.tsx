@@ -175,6 +175,42 @@ export default function Home() {
   }
   const [guesses, setGuesses] = useState<{ [key in CardRank]: "g1" | "g2" | "both" | undefined }>(initialGuesses);
 
+  const guessResult = (rank: CardRank): boolean => {
+    if (guesses[rank] === undefined) {
+      return false;
+    }
+    if (comboInfo1.combinations === 0 || comboInfo2.combinations === 0) {
+      return false;
+    }
+    let g1Percent = comboInfo1.combinationsByRank[rank] / comboInfo1.combinations;
+    let g2Percent = comboInfo2.combinationsByRank[rank] / comboInfo2.combinations;
+    if (guesses[rank] === "both") {
+      return Math.abs(g1Percent - g2Percent) < 0.02;
+    }
+    if (guesses[rank] === "g1") {
+      return g1Percent > g2Percent;
+    }
+    if (guesses[rank] === "g2") {
+      return g1Percent < g2Percent;
+    }
+    return false;
+  }
+  const guessedCorrectly = {
+    "A": guessResult("A"),
+    "K": guessResult("K"),
+    "Q": guessResult("Q"),
+    "J": guessResult("J"),
+    "T": guessResult("T"),
+    "9": guessResult("9"),
+    "8": guessResult("8"),
+    "7": guessResult("7"),
+    "6": guessResult("6"),
+    "5": guessResult("5"),
+    "4": guessResult("4"),
+    "3": guessResult("3"),
+    "2": guessResult("2"),
+  }
+
   return (
     <main className={styles.main}>
       <div className={styles.gridContainer}>
@@ -218,7 +254,7 @@ export default function Home() {
           }`}
       >
         {ranks.map((rank) => (
-          <React.Fragment key={rank}>
+          <div key={rank} className={`${styles.comboRow} ${gameMode ? "" : guessedCorrectly[rank] ? styles.correctComboRow : styles.incorrectComboRow}`}>
             {/* percentage */}
             <div
               className={`${styles.answer} ${styles.percentageCombo}`}
@@ -276,7 +312,7 @@ export default function Home() {
               )}
               %)
             </div>
-          </React.Fragment>
+          </div>
         ))}
       </div>
     </main>

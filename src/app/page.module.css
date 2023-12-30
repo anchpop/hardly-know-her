@@ -154,3 +154,13 @@
 .selected {
   box-shadow: 0 0 10px 5px #ffffff;
 }
+
+.comboRow {
+  display: contents;
+}
+.correctComboRow div {
+  filter: drop-shadow(4px 0px 1px red) drop-shadow(-4px 0px 1px green) drop-shadow(3px -3px 1px blue);
+}
+.incorrectComboRow div {
+  filter: grayscale(80%);
+}
