@@ -208,6 +208,7 @@ export default function Home() {
       >
         {ranks.map((rank) => (
           <React.Fragment key={rank}>
+            {/* percentage */}
             <div
               className={`${styles.answer} ${styles.percentageCombo}`}
               style={{ textAlign: "right" }}
@@ -224,21 +225,33 @@ export default function Home() {
               )}
               %)
             </div>
+
+            {/* absolute number */}
             <div style={{ textAlign: "center" }} className={`${styles.answer}`}>
               {comboInfo1.combinationsByRank[rank]}
             </div>
+
+            {/* rank */}
             <div>
               <div className={`${styles.g1} ${styles.rank}`}>{rank}</div>
             </div>
+
+            {/* separator */}
             <div style={{ textAlign: "center" }}>
               <div style={{ opacity: 0.5 }}>W/ 1</div>
             </div>
+
+            {/* rank */}
             <div>
               <div className={`${styles.g2} ${styles.rank}`}>{rank}</div>
             </div>
+
+            {/* absolute number */}
             <div style={{ textAlign: "center" }} className={`${styles.answer}`}>
               {comboInfo2.combinationsByRank[rank]}
             </div>
+
+            {/* percentage */}
             <div className={`${styles.answer} ${styles.percentageCombo}`}>
               (
               {formatNumber(
