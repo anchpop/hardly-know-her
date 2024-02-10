@@ -93,6 +93,7 @@ export default function Home() {
             className={`${styles.gridItem} ${toggledItems.has(itemKey) ? styles.toggled : ""
               }`}
             onClick={() => toggleItem(itemKey, toggledItems, setToggledItems)}
+            onDoubleClick={() => handleDoubleClick(itemKey, toggledItems, setToggledItems)}
           >
             {itemDisplay}
           </div>,
@@ -117,6 +118,44 @@ export default function Home() {
     }
     setToggledItems(newToggledItems);
   };
+
+  type HandType = 'suited' | 'offsuit' | 'pair';
+
+  const getHandInfo = (handKey: string): HandType => {
+    const handRanks = handKey.split('');
+    const firstRank: any = handRanks[0];
+    const secondRank: any = handRanks[1];
+
+    if (firstRank === secondRank) {
+      return 'pair';
+    }
+
+    const isSuited = ranks.indexOf(firstRank) > ranks.indexOf(secondRank);
+    return isSuited ? 'suited' : 'offsuit';
+  }
+
+  const handleDoubleClick = (itemKey: string, toggledItems: Set<String>, setToggledItems: React.Dispatch<React.SetStateAction<Set<String>>>) => {
+    const newToggledItems = new Set(toggledItems);
+    const h1r1: any = itemKey.split("")[0]; // Assuming itemKey is something like "67"
+    const h1r2: any = itemKey.split("")[1];
+
+
+    ranks.forEach((h2r1) => {
+      ranks.forEach((h2r2) => {
+        const otherItemKey = `${h2r1}${h2r2}`
+        if (getHandInfo(itemKey) === getHandInfo(otherItemKey)) {
+          let worstInOriginalHand = Math.min(ranks.indexOf(h1r1), ranks.indexOf(h1r2));
+          let worstInNewHand = Math.min(ranks.indexOf(h2r1), ranks.indexOf(h2r2));
+          if (worstInOriginalHand >= worstInNewHand) {
+            newToggledItems.add(otherItemKey);
+          }
+        }
+      });
+    });
+
+    setToggledItems(newToggledItems);
+  };
+
 
   const calculateCombinations: (toggledItems: Set<String>) => {
     combinations: number;
