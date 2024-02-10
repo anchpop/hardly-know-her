@@ -121,32 +121,55 @@ export default function Home() {
 
   type HandType = 'suited' | 'offsuit' | 'pair';
 
-  const getHandInfo = (handKey: string): HandType => {
+  function getHandInfo(handKey: string): { handType: HandType; higherRank: CardRank; lowerRank: CardRank } {
     const handRanks = handKey.split('');
-    const firstRank: any = handRanks[0];
-    const secondRank: any = handRanks[1];
+    const rank1: any = handRanks[0];
+    const rank2: any = handRanks[1];
+    const lowerRank = -ranks.indexOf(rank1) < -ranks.indexOf(rank2) ? rank1 : rank2;
+    const higherRank = !(-ranks.indexOf(rank1) < -ranks.indexOf(rank2)) ? rank1 : rank2;
 
-    if (firstRank === secondRank) {
-      return 'pair';
+    if (higherRank === lowerRank) {
+      return { handType: 'pair', higherRank, lowerRank };
     }
 
-    const isSuited = ranks.indexOf(firstRank) > ranks.indexOf(secondRank);
-    return isSuited ? 'suited' : 'offsuit';
+    const isSuited = ranks.indexOf(rank1) > ranks.indexOf(rank2);
+    return {
+      handType: isSuited ? 'suited' : 'offsuit',
+      higherRank,
+      lowerRank,
+    };
   }
 
   const handleDoubleClick = (itemKey: string, toggledItems: Set<String>, setToggledItems: React.Dispatch<React.SetStateAction<Set<String>>>) => {
     const newToggledItems = new Set(toggledItems);
-    const h1r1: any = itemKey.split("")[0]; // Assuming itemKey is something like "67"
-    const h1r2: any = itemKey.split("")[1];
-
+    const itemInfo = getHandInfo(itemKey);
 
     ranks.forEach((h2r1) => {
       ranks.forEach((h2r2) => {
-        const otherItemKey = `${h2r1}${h2r2}`
-        if (getHandInfo(itemKey) === getHandInfo(otherItemKey)) {
-          let worstInOriginalHand = Math.min(ranks.indexOf(h1r1), ranks.indexOf(h1r2));
-          let worstInNewHand = Math.min(ranks.indexOf(h2r1), ranks.indexOf(h2r2));
-          if (worstInOriginalHand >= worstInNewHand) {
+        const otherItemKey = `${h2r1}${h2r2}`;
+        const otherItemInfo = getHandInfo(otherItemKey);
+
+        // Check if the hand types match
+        console.log(`${otherItemKey} info:`, otherItemInfo);
+        if (itemInfo.handType === otherItemInfo.handType) {
+          let strictlyBetter = false;
+
+          if (itemInfo.handType === 'pair') {
+            // For pairs, strictly better means the rank is higher
+            strictlyBetter = ranks.indexOf(otherItemInfo.higherRank) > ranks.indexOf(itemInfo.higherRank);
+          } else {
+            // For suited and offsuit, check if the lower and higher ranks are strictly higher
+            const otherLowerIndex = 13 - ranks.indexOf(otherItemInfo.lowerRank);
+            const itemLowerIndex = 13 - ranks.indexOf(itemInfo.lowerRank);
+            const otherHigherIndex = 13 - ranks.indexOf(otherItemInfo.higherRank);
+            const itemHigherIndex = 13 - ranks.indexOf(itemInfo.higherRank);
+
+            if (itemInfo.handType === 'suited' || itemInfo.handType === 'offsuit') {
+              strictlyBetter = otherLowerIndex >= itemLowerIndex && otherHigherIndex >= itemHigherIndex;
+            }
+          }
+
+          if (strictlyBetter) {
             newToggledItems.add(otherItemKey);
           }
         }
@@ -155,7 +178,6 @@ export default function Home() {
 
     setToggledItems(newToggledItems);
   };
-
 
   const calculateCombinations: (toggledItems: Set<String>) => {
     combinations: number;
