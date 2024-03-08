@@ -76,7 +76,6 @@ export default function Home() {
   const { totalCombinations: totalCombinations2, combinationsByRank: combinationsByRank2 } = calculateCombinations(toggledItems2);
 
   const toggleItem = (handKey: HandKey, toggledItems: Set<HandKey>, setToggledItems: React.Dispatch<React.SetStateAction<Set<HandKey>>>) => {
-    console.log("single click");
     const newToggledItems = new Set(toggledItems);
     if (toggledItems.has(handKey)) {
       newToggledItems.delete(handKey);
@@ -86,8 +85,18 @@ export default function Home() {
     setToggledItems(newToggledItems);
   };
 
-  const handleDoubleClick = (handKey: HandKey, toggledItems: Set<HandKey>, setToggledItems: React.Dispatch<React.SetStateAction<Set<HandKey>>>) => {
-    console.log("double clcike");
+  const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, handKey: HandKey, toggledItems: Set<HandKey>, setToggledItems: React.Dispatch<React.SetStateAction<Set<HandKey>>>) => {
+    let clickIndex = e.detail % 3;
+    console.log(e.detail);
+    if (clickIndex == 1) {
+      toggleItem(handKey, toggledItems, setToggledItems);
+    }
+    else {
+      toggleBetterItems(handKey, toggledItems, setToggledItems)
+    }
+  }
+
+  const toggleBetterItems = (handKey: HandKey, toggledItems: Set<HandKey>, setToggledItems: React.Dispatch<React.SetStateAction<Set<HandKey>>>) => {
     const strictlyBetterHands = new Set<HandKey>();
     const itemInfo = getHandInfo(handKey);
 
@@ -145,8 +154,7 @@ export default function Home() {
           <div
             key={handKey}
             className={`${styles.gridItem} ${toggledItems.has(handKey) ? styles.toggled : ""}`}
-            onClick={() => toggleItem(handKey, toggledItems, setToggledItems)}
-            onDoubleClick={() => handleDoubleClick(handKey, toggledItems, setToggledItems)}
+            onClick={(e) => handleClick(e, handKey, toggledItems, setToggledItems)}
           >
             {itemDisplay}
           </div>
