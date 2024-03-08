@@ -12,6 +12,16 @@
   display: grid;
   grid-template-columns: repeat(13, 1fr);
   width: 100%;
+
+  user-select: none;
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;
+  /* iOS Safari */
 }
 
 .comboGrid {
@@ -20,6 +30,17 @@
   grid-gap: 6px;
   margin-top: 10px;
   font-size: 14px;
+
+  user-select: none;
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+
 }
 
 .gridItem {

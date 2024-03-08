@@ -1,230 +1,67 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
 import styles from "./page.module.css";
 
-type CardRank =
-  | "A"
-  | "K"
-  | "Q"
-  | "J"
-  | "T"
-  | "9"
-  | "8"
-  | "7"
-  | "6"
-  | "5"
-  | "4"
-  | "3"
-  | "2";
+type CardRank = "A" | "K" | "Q" | "J" | "T" | "9" | "8" | "7" | "6" | "5" | "4" | "3" | "2";
+type HandType = "suited" | "offsuit" | "pair";
+type HandKey = `${CardRank}${CardRank}`;
+type GuessValue = "g1" | "g2" | "both";
+
+const ranks: CardRank[] = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"];
 
 function formatNumber(num: number) {
-  // Split the number on the decimal point
-  let parts = num.toString().split(".");
+  const [integerPart, decimalPart] = num.toFixed(1).split(".");
+  return `${integerPart.padStart(2, "0")}.${decimalPart}`;
+}
 
-  // Pad the integer part to ensure it has at least two digits
-  parts[0] = parts[0].padStart(2, "0");
+function getHandInfo(handKey: HandKey): { handType: HandType; higherRank: CardRank; lowerRank: CardRank } {
+  const [rank1, rank2] = handKey.split("") as [CardRank, CardRank];
+  const lowerRank = ranks.indexOf(rank1) < ranks.indexOf(rank2) ? rank1 : rank2;
+  const higherRank = ranks.indexOf(rank1) < ranks.indexOf(rank2) ? rank2 : rank1;
 
-  // If there is a decimal part, format it to have exactly one digit
-  if (parts[1]) {
-    parts[1] =
-      parts[1].length > 1 ? parts[1].substring(0, 1) : parts[1].padEnd(1, "0");
-  } else {
-    // If there wasn't a decimal part, add ".0"
-    parts.push("0");
+  if (higherRank === lowerRank) {
+    return { handType: "pair", higherRank, lowerRank };
   }
 
-  // Join the parts back together
-  return parts.join(".");
+  const isSuited = ranks.indexOf(rank1) > ranks.indexOf(rank2);
+  return {
+    handType: isSuited ? "suited" : "offsuit",
+    higherRank,
+    lowerRank,
+  };
+}
+
+function calculateCombinations(toggledItems: Set<HandKey>) {
+  const combinationsByRank: Record<CardRank, number> = ranks.reduce((acc, rank) => {
+    acc[rank] = 0;
+    return acc;
+  }, {} as Record<CardRank, number>);
+
+  let totalCombinations = 0;
+
+  for (const handKey of toggledItems) {
+    const itemInfo = getHandInfo(handKey);
+    const { higherRank, lowerRank } = getHandInfo(handKey);
+    const combos = itemInfo.handType === "pair" ? 6 : itemInfo.handType === "suited" ? 4 : 12;
+    totalCombinations += combos;
+    combinationsByRank[higherRank] += combos;
+    combinationsByRank[lowerRank] += combos;
+  }
+
+  return { totalCombinations, combinationsByRank };
 }
 
 export default function Home() {
-  // Define ranks for poker cards
-  const ranks: CardRank[] = [
-    "A",
-    "K",
-    "Q",
-    "J",
-    "T",
-    "9",
-    "8",
-    "7",
-    "6",
-    "5",
-    "4",
-    "3",
-    "2",
-  ];
-
-  // State to track the toggled items
-  const [toggledItems1, setToggledItems1] = useState<Set<String>>(new Set());
-  const [toggledItems2, setToggledItems2] = useState<Set<String>>(new Set());
-
-  // Function to generate grid items
-  const generateGridItems = (
-    toggledItems: Set<String>,
-    setToggledItems: React.Dispatch<React.SetStateAction<Set<String>>>,
-  ) => {
-    let gridItems = [];
-    for (let i = 0; i < ranks.length; i++) {
-      for (let j = 0; j < ranks.length; j++) {
-        // Generate a unique key for each item
-        // but always put ace between king and queen, and king between queen and jack, etc.
-        const itemKey = `${ranks[j]}${ranks[i]}`;
-        const itemDisplay =
-          ranks[j] === "A" ||
-            (ranks[j] === "K" && ranks[i] !== "A") ||
-            (ranks[j] === "Q" && ranks[i] !== "A" && ranks[i] !== "K") ||
-            (ranks[j] === "J" &&
-              ranks[i] !== "A" &&
-              ranks[i] !== "K" &&
-              ranks[i] !== "Q") ||
-            (ranks[j] === "T" &&
-              ranks[i] !== "A" &&
-              ranks[i] !== "K" &&
-              ranks[i] !== "Q" &&
-              ranks[i] !== "J")
-            ? `${ranks[j]}${ranks[i]}`
-            : `${ranks[i]}${ranks[j]}`;
-        gridItems.push(
-          <div
-            key={itemKey}
-            className={`${styles.gridItem} ${toggledItems.has(itemKey) ? styles.toggled : ""
-              }`}
-            onClick={() => toggleItem(itemKey, toggledItems, setToggledItems)}
-            onDoubleClick={() => handleDoubleClick(itemKey, toggledItems, setToggledItems)}
-          >
-            {itemDisplay}
-          </div>,
-        );
-      }
-    }
-    return gridItems;
-  };
-
-  // Function to handle item toggle
-  const toggleItem = (
-    itemKey: string,
-    toggledItems: Set<String>,
-    setToggledItems: React.Dispatch<React.SetStateAction<Set<String>>>,
-  ) => {
-    const newToggledItems = new Set(toggledItems);
-    if (toggledItems.has(itemKey)) {
-      // make a new set identical to toggledItems but without the item
-      newToggledItems.delete(itemKey);
-    } else {
-      newToggledItems.add(itemKey);
-    }
-    setToggledItems(newToggledItems);
-  };
-
-  type HandType = 'suited' | 'offsuit' | 'pair';
-
-  function getHandInfo(handKey: string): { handType: HandType; higherRank: CardRank; lowerRank: CardRank } {
-    const handRanks = handKey.split('');
-    const rank1: any = handRanks[0];
-    const rank2: any = handRanks[1];
-    const lowerRank = -ranks.indexOf(rank1) < -ranks.indexOf(rank2) ? rank1 : rank2;
-    const higherRank = !(-ranks.indexOf(rank1) < -ranks.indexOf(rank2)) ? rank1 : rank2;
-
-    if (higherRank === lowerRank) {
-      return { handType: 'pair', higherRank, lowerRank };
-    }
-
-    const isSuited = ranks.indexOf(rank1) > ranks.indexOf(rank2);
-    return {
-      handType: isSuited ? 'suited' : 'offsuit',
-      higherRank,
-      lowerRank,
-    };
-  }
-
-  const handleDoubleClick = (itemKey: string, toggledItems: Set<String>, setToggledItems: React.Dispatch<React.SetStateAction<Set<String>>>) => {
-    const newToggledItems = new Set(toggledItems);
-    const itemInfo = getHandInfo(itemKey);
-
-    ranks.forEach((h2r1) => {
-      ranks.forEach((h2r2) => {
-        const otherItemKey = `${h2r1}${h2r2}`;
-        const otherItemInfo = getHandInfo(otherItemKey);
-
-        // Check if the hand types match
-        console.log(`${otherItemKey} info:`, otherItemInfo);
-        if (itemInfo.handType === otherItemInfo.handType) {
-          let strictlyBetter = false;
-
-          if (itemInfo.handType === 'pair') {
-            // For pairs, strictly better means the rank is higher
-            strictlyBetter = ranks.indexOf(otherItemInfo.higherRank) > ranks.indexOf(itemInfo.higherRank);
-          } else {
-            // For suited and offsuit, check if the lower and higher ranks are strictly higher
-            const otherLowerIndex = 13 - ranks.indexOf(otherItemInfo.lowerRank);
-            const itemLowerIndex = 13 - ranks.indexOf(itemInfo.lowerRank);
-            const otherHigherIndex = 13 - ranks.indexOf(otherItemInfo.higherRank);
-            const itemHigherIndex = 13 - ranks.indexOf(itemInfo.higherRank);
-
-            if (itemInfo.handType === 'suited' || itemInfo.handType === 'offsuit') {
-              strictlyBetter = otherLowerIndex >= itemLowerIndex && otherHigherIndex >= itemHigherIndex;
-            }
-          }
-
-          if (strictlyBetter) {
-            newToggledItems.add(otherItemKey);
-          }
-        }
-      });
-    });
-
-    setToggledItems(newToggledItems);
-  };
-
-  const calculateCombinations: (toggledItems: Set<String>) => {
-    combinations: number;
-    combinationsByRank: Record<CardRank, number>;
-  } = (toggledItems: Set<String>) => {
-    let totals = {
-      combinations: 0,
-      combinationsByRank: {} as Record<CardRank, number>,
-    };
-    for (let rank of ranks) {
-      totals.combinationsByRank[rank] = 0;
-    }
-
-    for (let i = 0; i < ranks.length; i++) {
-      for (let j = 0; j < ranks.length; j++) {
-        const itemKey = `${ranks[j]}${ranks[i]}`;
-        if (toggledItems.has(itemKey)) {
-          const multiplier = i > j ? 12 : i === j ? 6 : 4;
-          totals.combinations += multiplier;
-
-          // Check for each rank 
-          for (let rank of ranks) {
-            const exactlyOneRank =
-              (ranks[j] === rank && ranks[i] !== rank) ||
-              (ranks[j] !== rank && ranks[i] === rank);
-            if (exactlyOneRank) {
-              totals.combinationsByRank[rank] += multiplier;
-            }
-          }
-        }
-      }
-    }
-
-    return totals;
-  };
-
-  const comboInfo1 = calculateCombinations(toggledItems1);
-  const comboInfo2 = calculateCombinations(toggledItems2);
-
-  const [gameMode, setGameMode] = useState<boolean>(false);
-
-  const initialGuesses = {
-    "A": undefined,
-    "K": undefined,
-    "Q": undefined,
-    "J": undefined,
-    "T": undefined,
+  const [toggledItems1, setToggledItems1] = useState<Set<HandKey>>(new Set());
+  const [toggledItems2, setToggledItems2] = useState<Set<HandKey>>(new Set());
+  const [gameMode, setGameMode] = useState(false);
+  const [guesses, setGuesses] = useState<Record<CardRank, GuessValue | undefined>>({
+    A: undefined,
+    K: undefined,
+    Q: undefined,
+    J: undefined,
+    T: undefined,
     "9": undefined,
     "8": undefined,
     "7": undefined,
@@ -233,18 +70,101 @@ export default function Home() {
     "4": undefined,
     "3": undefined,
     "2": undefined,
+  });
+
+  const { totalCombinations: totalCombinations1, combinationsByRank: combinationsByRank1 } = calculateCombinations(toggledItems1);
+  const { totalCombinations: totalCombinations2, combinationsByRank: combinationsByRank2 } = calculateCombinations(toggledItems2);
+
+  const toggleItem = (handKey: HandKey, toggledItems: Set<HandKey>, setToggledItems: React.Dispatch<React.SetStateAction<Set<HandKey>>>) => {
+    console.log("single click");
+    const newToggledItems = new Set(toggledItems);
+    if (toggledItems.has(handKey)) {
+      newToggledItems.delete(handKey);
+    } else {
+      newToggledItems.add(handKey);
+    }
+    setToggledItems(newToggledItems);
+  };
+
+  const handleDoubleClick = (handKey: HandKey, toggledItems: Set<HandKey>, setToggledItems: React.Dispatch<React.SetStateAction<Set<HandKey>>>) => {
+    console.log("double clcike");
+    const strictlyBetterHands = new Set<HandKey>();
+    const itemInfo = getHandInfo(handKey);
+
+    for (const higherRank of ranks) {
+      for (const lowerRank of ranks) {
+        const otherHandKey: HandKey = `${higherRank}${lowerRank}` as HandKey;
+        const otherItemInfo = getHandInfo(otherHandKey);
+
+        if (itemInfo.handType === otherItemInfo.handType) {
+          let strictlyBetter = false;
+
+          if (itemInfo.handType === "pair") {
+            strictlyBetter = ranks.indexOf(otherItemInfo.higherRank) > ranks.indexOf(itemInfo.higherRank);
+          } else {
+            const otherLowerIndex = ranks.indexOf(otherItemInfo.lowerRank);
+            const itemLowerIndex = ranks.indexOf(itemInfo.lowerRank);
+            const otherHigherIndex = ranks.indexOf(otherItemInfo.higherRank);
+            const itemHigherIndex = ranks.indexOf(itemInfo.higherRank);
+
+            if (itemInfo.handType === "suited" || itemInfo.handType === "offsuit") {
+              strictlyBetter = (otherLowerIndex >= itemLowerIndex && otherHigherIndex >= itemHigherIndex) && (otherLowerIndex > itemLowerIndex || otherHigherIndex > itemHigherIndex)
+            }
+          }
+
+          if (strictlyBetter) {
+            strictlyBetterHands.add(otherHandKey);
+          }
+        }
+      }
+    }
+
+
+    const newToggledItems = new Set(toggledItems);
+    const allBetterHandsAreToggled = Array.from(strictlyBetterHands).every((betterHandKey) => newToggledItems.has(betterHandKey));
+
+    if (allBetterHandsAreToggled) {
+      strictlyBetterHands.forEach((handKey) => newToggledItems.delete(handKey));
+      newToggledItems.delete(handKey);
+    } else {
+      strictlyBetterHands.forEach((handKey) => newToggledItems.add(handKey));
+      newToggledItems.add(handKey);
+    }
+
+    setToggledItems(newToggledItems);
+  };
+
+  function generateGridItems(toggledItems: Set<HandKey>, setToggledItems: React.Dispatch<React.SetStateAction<Set<HandKey>>>) {
+    const gridItems = [];
+    for (let i = ranks.length - 1; i >= 0; i--) {
+      for (let j = ranks.length - 1; j >= 0; j--) {
+        const handKey: HandKey = `${ranks[i]}${ranks[j]}` as HandKey;
+        const isSuited = i < j;
+        const itemDisplay = isSuited ? handKey : `${ranks[j]}${ranks[i]}`;
+        gridItems.push(
+          <div
+            key={handKey}
+            className={`${styles.gridItem} ${toggledItems.has(handKey) ? styles.toggled : ""}`}
+            onClick={() => toggleItem(handKey, toggledItems, setToggledItems)}
+            onDoubleClick={() => handleDoubleClick(handKey, toggledItems, setToggledItems)}
+          >
+            {itemDisplay}
+          </div>
+        );
+      }
+    }
+    return gridItems;
   }
-  const [guesses, setGuesses] = useState<{ [key in CardRank]: "g1" | "g2" | "both" | undefined }>(initialGuesses);
 
   const guessResult = (rank: CardRank): boolean => {
     if (guesses[rank] === undefined) {
       return false;
     }
-    if (comboInfo1.combinations === 0 || comboInfo2.combinations === 0) {
+    if (totalCombinations1 === 0 || totalCombinations2 === 0) {
       return false;
     }
-    let g1Percent = comboInfo1.combinationsByRank[rank] / comboInfo1.combinations;
-    let g2Percent = comboInfo2.combinationsByRank[rank] / comboInfo2.combinations;
+    const g1Percent = combinationsByRank1[rank] / totalCombinations1;
+    const g2Percent = combinationsByRank2[rank] / totalCombinations2;
     if (guesses[rank] === "both") {
       return Math.abs(g1Percent - g2Percent) < 0.02;
     }
@@ -255,118 +175,81 @@ export default function Home() {
       return g1Percent < g2Percent;
     }
     return false;
-  }
-  const guessedCorrectly = {
-    "A": guessResult("A"),
-    "K": guessResult("K"),
-    "Q": guessResult("Q"),
-    "J": guessResult("J"),
-    "T": guessResult("T"),
-    "9": guessResult("9"),
-    "8": guessResult("8"),
-    "7": guessResult("7"),
-    "6": guessResult("6"),
-    "5": guessResult("5"),
-    "4": guessResult("4"),
-    "3": guessResult("3"),
-    "2": guessResult("2"),
-  }
+  };
+
+  const guessedCorrectly: Record<CardRank, boolean> = ranks.reduce((acc, rank) => {
+    acc[rank] = guessResult(rank);
+    return acc;
+  }, {} as Record<CardRank, boolean>);
 
   return (
     <main className={styles.main}>
       <div className={styles.gridContainer}>
         <div style={{ width: "100%" }}>
-          <div className={`${styles.cardGrid} ${styles.g1}`}>
-            {generateGridItems(toggledItems1, setToggledItems1)}
-          </div>
-          <div className={styles.combos}>Combos: {comboInfo1.combinations}</div>
+          <div className={`${styles.cardGrid} ${styles.g1}`}>{generateGridItems(toggledItems1, setToggledItems1)}</div>
+          <div className={styles.combos}>Combos: {totalCombinations1}</div>
         </div>
         <div style={{ width: "100%" }}>
-          <div className={`${styles.cardGrid} ${styles.g2}`}>
-            {generateGridItems(toggledItems2, setToggledItems2)}
-          </div>
-          <div>
-            <div className={styles.combos}>
-              Combos: {comboInfo2.combinations}
-            </div>
-          </div>
+          <div className={`${styles.cardGrid} ${styles.g2}`}>{generateGridItems(toggledItems2, setToggledItems2)}</div>
+          <div className={styles.combos}>Combos: {totalCombinations2}</div>
         </div>
       </div>
-      <div className={`${styles.gameButtons}`}>
+      <div className={styles.gameButtons}>
         <button
           className={styles.bigButton}
           onClick={() => {
             setToggledItems1(new Set());
             setToggledItems2(new Set());
-            setGuesses(initialGuesses);
+            setGuesses(ranks.reduce((acc, rank) => {
+              acc[rank] = undefined;
+              return acc;
+            }, {} as Record<CardRank, GuessValue | undefined>));
           }}
         >
           Clear board
         </button>
-        <button
-          className={styles.bigButton}
-          onClick={() => setGameMode(!gameMode)}
-        >
+        <button className={styles.bigButton} onClick={() => setGameMode(!gameMode)}>
           🎮 <b>{gameMode ? "Game Mode Completed" : "Game Mode Activate"}</b> 🃏
         </button>
       </div>
-      <div
-        className={`${gameMode ? styles.gameContainer : ""} ${styles.comboGrid
-          }`}
-      >
+      <div className={`${gameMode ? styles.gameContainer : ""} ${styles.comboGrid}`}>
         {ranks.map((rank) => (
           <div key={rank} className={`${styles.comboRow} ${gameMode ? "" : guessedCorrectly[rank] ? styles.correctComboRow : styles.incorrectComboRow}`}>
-            {/* percentage */}
-            <div
-              className={`${styles.answer} ${styles.percentageCombo}`}
-              style={{ textAlign: "right" }}
-            >
+            <div className={`${styles.answer} ${styles.percentageCombo}`} style={{ textAlign: "right" }}>
               (
               {formatNumber(
-                comboInfo1.combinations !== 0
+                totalCombinations1 !== 0
                   ? Math.round(
-                    (comboInfo1.combinationsByRank[rank] /
-                      comboInfo1.combinations) *
+                    (combinationsByRank1[rank] /
+                      totalCombinations1) *
                     1000,
                   ) / 10
                   : 0,
               )}
               %)
             </div>
-
-            {/* absolute number */}
-            <div style={{ textAlign: "center" }} className={`${styles.answer}`}>
-              {comboInfo1.combinationsByRank[rank]}
+            <div style={{ textAlign: "center" }} className={styles.answer}>
+              {combinationsByRank1[rank]}
             </div>
-
-            {/* rank */}
             <div onClick={() => setGuesses({ ...guesses, [rank]: guesses[rank] === "g1" ? undefined : "g1" })}>
               <div className={`${guesses[rank] === "g1" ? styles.selected : ""} ${styles.g1} ${styles.rank}`}>{rank}</div>
             </div>
-
-            {/* separator */}
             <div style={{ textAlign: "center" }} className={`${guesses[rank] === "both" ? styles.selected : ""}`} onClick={() => setGuesses({ ...guesses, [rank]: guesses[rank] === "both" ? undefined : "both" })}>
               <div style={{ opacity: 0.5 }}>W/ 1</div>
             </div>
-
-            {/* rank */}
             <div onClick={() => setGuesses({ ...guesses, [rank]: guesses[rank] === "g2" ? undefined : "g2" })}>
               <div className={`${guesses[rank] === "g2" ? styles.selected : ""} ${styles.g2} ${styles.rank}`}>{rank}</div>
             </div>
-
-            {/* absolute number */}
-            <div style={{ textAlign: "center" }} className={`${styles.answer}`}>
-              {comboInfo2.combinationsByRank[rank]}
+            <div style={{ textAlign: "center" }} className={styles.answer}>
+              {combinationsByRank2[rank]}
             </div>
-
-            {/* percentage */}
             <div className={`${styles.answer} ${styles.percentageCombo}`}>
               (
               {formatNumber(
-                comboInfo2.combinations !== 0
+                totalCombinations2 !== 0
                   ? Math.round(
-                    (comboInfo2.combinationsByRank[rank] /
-                      comboInfo2.combinations) *
+                    (combinationsByRank2[rank] /
+                      totalCombinations2) *
                     1000,
                   ) / 10
                   : 0,
