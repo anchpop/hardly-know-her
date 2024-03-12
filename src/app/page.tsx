@@ -40,10 +40,33 @@ function calculateCombinations(toggledItems: Set<HandKey>) {
 
   let totalCombinations = 0;
 
+  const suits = ["s", "h", "d", "c"];
+
   for (const handKey of toggledItems) {
-    const itemInfo = getHandInfo(handKey);
-    const { higherRank, lowerRank } = getHandInfo(handKey);
-    const combos = itemInfo.handType === "pair" ? 6 : itemInfo.handType === "suited" ? 4 : 12;
+    const { handType, higherRank, lowerRank } = getHandInfo(handKey);
+
+    let combos = 0;
+
+    if (handType === "pair") {
+      for (let i = 0; i < suits.length; i++) {
+        for (let j = i + 1; j < suits.length; j++) {
+          combos++;
+        }
+      }
+    } else if (handType === "suited") {
+      for (const suit of suits) {
+        combos++;
+      }
+    } else {
+      for (const suit1 of suits) {
+        for (const suit2 of suits) {
+          if (suit1 !== suit2) {
+            combos++;
+          }
+        }
+      }
+    }
+
     totalCombinations += combos;
     combinationsByRank[higherRank] += combos;
     combinationsByRank[lowerRank] += combos;
