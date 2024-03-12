@@ -32,7 +32,7 @@ function getHandInfo(handKey: HandKey): { handType: HandType; higherRank: CardRa
   };
 }
 
-function calculateCombinations(toggledItems: Set<HandKey>) {
+function calculateCombinations(toggledItems: Set<HandKey>, selectedCards: { rank: CardRank; suit: string }[]) {
   const combinationsByRank: Record<CardRank, number> = ranks.reduce((acc, rank) => {
     acc[rank] = 0;
     return acc;
@@ -41,7 +41,6 @@ function calculateCombinations(toggledItems: Set<HandKey>) {
   let totalCombinations = 0;
 
   const suits = ["s", "h", "d", "c"];
-
   for (const handKey of toggledItems) {
     const { handType, higherRank, lowerRank } = getHandInfo(handKey);
 
@@ -50,22 +49,38 @@ function calculateCombinations(toggledItems: Set<HandKey>) {
     if (handType === "pair") {
       for (let i = 0; i < suits.length; i++) {
         for (let j = i + 1; j < suits.length; j++) {
-          combos++;
+          const card1 = { rank: higherRank, suit: suits[i] };
+          const card2 = { rank: higherRank, suit: suits[j] };
+          if (!selectedCards.some((card) => card.rank === card1.rank && card.suit === card1.suit) &&
+            !selectedCards.some((card) => card.rank === card2.rank && card.suit === card2.suit)) {
+            combos++;
+          }
         }
       }
     } else if (handType === "suited") {
       for (const suit of suits) {
-        combos++;
+        const card1 = { rank: higherRank, suit };
+        const card2 = { rank: lowerRank, suit };
+        if (!selectedCards.some((card) => card.rank === card1.rank && card.suit === card1.suit) &&
+          !selectedCards.some((card) => card.rank === card2.rank && card.suit === card2.suit)) {
+          combos++;
+        }
       }
     } else {
       for (const suit1 of suits) {
         for (const suit2 of suits) {
           if (suit1 !== suit2) {
-            combos++;
+            const card1 = { rank: higherRank, suit: suit1 };
+            const card2 = { rank: lowerRank, suit: suit2 };
+            if (!selectedCards.some((card) => card.rank === card1.rank && card.suit === card1.suit) &&
+              !selectedCards.some((card) => card.rank === card2.rank && card.suit === card2.suit)) {
+              combos++;
+            }
           }
         }
       }
     }
+
 
     totalCombinations += combos;
     combinationsByRank[higherRank] += combos;
@@ -78,6 +93,7 @@ function calculateCombinations(toggledItems: Set<HandKey>) {
 export default function Home() {
   const [toggledItems1, setToggledItems1] = useState<Set<HandKey>>(new Set());
   const [toggledItems2, setToggledItems2] = useState<Set<HandKey>>(new Set());
+  const [selectedCards, setSelectedCards] = useState<{ rank: CardRank; suit: string }[]>([]);
   const [gameMode, setGameMode] = useState(false);
   const [guesses, setGuesses] = useState<Record<CardRank, GuessValue | undefined>>({
     A: undefined,
@@ -95,8 +111,8 @@ export default function Home() {
     "2": undefined,
   });
 
-  const { totalCombinations: totalCombinations1, combinationsByRank: combinationsByRank1 } = calculateCombinations(toggledItems1);
-  const { totalCombinations: totalCombinations2, combinationsByRank: combinationsByRank2 } = calculateCombinations(toggledItems2);
+  const { totalCombinations: totalCombinations1, combinationsByRank: combinationsByRank1 } = calculateCombinations(toggledItems1, selectedCards);
+  const { totalCombinations: totalCombinations2, combinationsByRank: combinationsByRank2 } = calculateCombinations(toggledItems2, selectedCards);
 
   const toggleItem = (handKey: HandKey, toggledItems: Set<HandKey>, setToggledItems: React.Dispatch<React.SetStateAction<Set<HandKey>>>) => {
     const newToggledItems = new Set(toggledItems);
@@ -223,6 +239,60 @@ export default function Home() {
         <div style={{ width: "100%" }}>
           <div className={`${styles.cardGrid} ${styles.g2}`}>{generateGridItems(toggledItems2, setToggledItems2)}</div>
           <div className={styles.combos}>Combos: {totalCombinations2}</div>
+        </div>
+      </div>
+      <div className={styles.cardSelectionContainer}>
+        <div className={styles.cardSelectionTitle}>Select Cards:</div>
+        <div className={styles.cardSelectionGrid}>
+          {selectedCards.map((card, index) => (
+            <div key={index} className={styles.selectedCard}>
+              <select
+                value={card.rank}
+                onChange={(e) => {
+                  const newSelectedCards = [...selectedCards];
+                  newSelectedCards[index].rank = e.target.value as CardRank;
+                  setSelectedCards(newSelectedCards);
+                }}
+              >
+                {ranks.map((rank) => (
+                  <option key={rank} value={rank}>
+                    {rank}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={card.suit}
+                onChange={(e) => {
+                  const newSelectedCards = [...selectedCards];
+                  newSelectedCards[index].suit = e.target.value;
+                  setSelectedCards(newSelectedCards);
+                }}
+              >
+                <option value="s">♠</option>
+                <option value="h">♥</option>
+                <option value="d">♦</option>
+                <option value="c">♣</option>
+              </select>
+              <button
+                className={styles.deleteCardButton}
+                onClick={() => {
+                  const newSelectedCards = [...selectedCards];
+                  newSelectedCards.splice(index, 1);
+                  setSelectedCards(newSelectedCards);
+                }}
+              >
+                &times;
+              </button>
+            </div>
+          ))}
+          {selectedCards.length < 5 && (
+            <button
+              className={styles.addCardButton}
+              onClick={() => setSelectedCards([...selectedCards, { rank: "A", suit: "s" }])}
+            >
+              +
+            </button>
+          )}
         </div>
       </div>
       <div className={styles.gameButtons}>
