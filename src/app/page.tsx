@@ -247,6 +247,7 @@ export default function Home() {
           {selectedCards.map((card, index) => (
             <div key={index} className={styles.selectedCard}>
               <select
+                className={styles.rankSelect}
                 value={card.rank}
                 onChange={(e) => {
                   const newSelectedCards = [...selectedCards];
@@ -261,6 +262,7 @@ export default function Home() {
                 ))}
               </select>
               <select
+                className={styles.suitSelect}
                 value={card.suit}
                 onChange={(e) => {
                   const newSelectedCards = [...selectedCards];
@@ -286,12 +288,14 @@ export default function Home() {
             </div>
           ))}
           {selectedCards.length < 5 && (
-            <button
-              className={styles.addCardButton}
-              onClick={() => setSelectedCards([...selectedCards, { rank: "A", suit: "s" }])}
-            >
-              +
-            </button>
+            <div className={styles.addCardButtonContainer}>
+              <button
+                className={`${styles.addCardButton} ${styles.button}`}
+                onClick={() => setSelectedCards([...selectedCards, { rank: "A", suit: "s" }])}
+              >
+                +
+              </button>
+            </div>
           )}
         </div>
       </div>

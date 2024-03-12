@@ -187,8 +187,42 @@
 }
 
 .selectedCard {
-  border: none;
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
 }
+
+.rankSelect,
+.suitSelect {
+  appearance: none;
+  background-color: #f2f2f2;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 16px;
+  color: #333;
+  margin-right: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.rankSelect:hover,
+.suitSelect:hover {
+  background-color: #e0e0e0;
+}
+
+.rankSelect:focus,
+.suitSelect:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #007bff;
+}
+
+.rankSelect option,
+.suitSelect option {
+  background-color: #fff;
+  color: #333;
+}
+
 
 .deleteCardButton {
   background-color: #ff4d4d;
@@ -206,4 +240,13 @@
 
 .deleteCardButton:hover {
   background-color: #e60000;
+}
+
+.addCardButton {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
 }
